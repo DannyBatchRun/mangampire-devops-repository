@@ -114,7 +114,7 @@ def buildDockerImage(def microservice) {
 def pushDockerImage(def microservice, def jarFile) {
     def pathPush = "${microservice}/target"
     if(microservice == "" || microservice == null) {
-        pathPush = pathPush.replaceAll(null,"")
+        pathPush = pathPush.replaceAll("null","")
         pathPush = pathPush.replaceAll("/","").trim()
     }
     println "PATH IS!!!! ${pathPush}"
