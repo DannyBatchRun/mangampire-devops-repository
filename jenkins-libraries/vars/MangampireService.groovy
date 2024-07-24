@@ -95,7 +95,7 @@ def updateDevelopBranchFrontend(def newVersion, def gitToken) {
     def repository = "https://${gitToken}@github.com/DannyBatchRun/mangampire-frontend-repository.git"
     def commitMessage = "Version of frontend updated to ${newVersion}"
     sh("set +x; git add .")
-    sh("set +x; git commit -m ${commitMessage}")
+    sh("set +x; git commit -m \"${commitMessage}\"")
     sh("set +x; git push ${repository} develop")
     sh("git tag ${newVersion} && git push ${repository} develop --tags")
 }
