@@ -87,16 +87,9 @@ pipeline {
                 script {
                     println "Deleting docker images in local..."
                     sleep 20
-                    service.deleteDockerLocalImages(service.getJarFile("manga-storehouse"))
-                    service.deleteDockerLocalImages(service.getJarFile("clients-transaction"))
-                    service.deleteDockerLocalImages(service.getJarFile("backend-service"))
-                }
-            }
-        }
-        stage('Container Test') {
-            steps {
-                script {
-                    println "Container test"
+                    service.deleteLocalDockerImages(service.getJarFile("manga-storehouse"))
+                    service.deleteLocalDockerImages(service.getJarFile("clients-transaction"))
+                    service.deleteLocalDockerImages(service.getJarFile("backend-service"))
                 }
             }
         }
@@ -104,7 +97,7 @@ pipeline {
     post {
         success {
             script {
-                println "Is a success!"
+                println "Images pushed successfully on ECR."
             }
             cleanWs()
         }
