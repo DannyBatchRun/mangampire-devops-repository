@@ -94,10 +94,10 @@ def pushDockerImage(def microservice, def jarFile) {
 }
 
 def deleteLocalDockerImages(def imageFile) {
-    def command = "docker rmi -f \$(docker images -q ${imageFile})"
-    def process = command.execute()
-    process.waitFor()
+    sh("docker rmi -f \$(docker images -q ${imageFile})")
 }
+
+
 
 
 
