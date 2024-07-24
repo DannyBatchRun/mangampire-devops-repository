@@ -35,7 +35,7 @@ pipeline {
                 script {
                     sh("mvn -v")
                     println "Updating version frontend to ${params.RELEASE_SELECT} version."
-                    newVersion = service.updateApplicationVersionFrontEnd("${params.RELEASE_SELECT}")
+                    newVersion = service.updateApplicationVersionFrontend("${params.RELEASE_SELECT}")
                     currentBuild.displayName = "#${currentBuild.number} - Version ${newVersion}"
                     currentBuild.description = "Build n°#${currentBuild.number}"
                     sleep 20
@@ -51,12 +51,15 @@ pipeline {
                 }
             }
         }
-        stage('Clean Local Install') {
+        stage('Clean and Push') {
             steps {
                 script {
-                    println "Clean local images..."
+                    println "Clean local and push to repository..."
                     sleep 20
                     service.deleteLocalDockerImages("${module}")
+                    withCredentials([string(credentialsId: 'github-pat-secret', variable: 'GIT_TOKEN')]) {
+                        service.updateDevelopBranchFrontend("${newVersion}","${GIT_TOKEN}")
+                    }
                 }
             }
         }
