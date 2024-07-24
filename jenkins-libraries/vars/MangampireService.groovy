@@ -29,6 +29,29 @@ def updateApplicationVersion(def pathSelect, def releaseSelect) {
     return newVersion
 }
 
+def updateApplicationVersionFrontend(def updateVersion) {
+    def newVersion = ''
+    def oldVersion = sh(script: "mvn help:evaluate -Dexpression=project.version -q -DforceStdout", returnStdout: true).trim()
+    println "Actual version is ${oldVersion}. Updating..."
+    def versionParts = oldVersion.tokenize('.')
+    switch(updateVersion) {
+        case "Major":
+            versionParts[0] = versionParts[0].toInteger() + 1
+            versionParts[1] = '0'
+            versionParts[2] = '0'
+            break
+        case "Minor":
+            versionParts[1] = versionParts[1].toInteger() + 1
+            versionParts[2] = '0'
+            break
+        case "Patch":
+            versionParts[2] = versionParts[2].toInteger() + 1
+            break
+    }
+    newVersion = versionParts.join('.')
+    sh("""mvn versions:set -DnewVersion=${newVersion} versions:commit""")
+    return newVersion
+}
 
 def getJarFile(def selectedService) {
     def nameJar = ""
@@ -37,7 +60,7 @@ def getJarFile(def selectedService) {
             nameJar = "mangampire-storehouse-service"
             break
         case "clients-transaction":
-            nameJar = "mangampire-transaction"
+            nameJar = "mangampire-transaction-service"
             break
         case "backend-service":
             nameJar = "mangampire-backend-service"
@@ -68,6 +91,15 @@ def updateDevelopBranch(def newVersion, def newBranch, def backendService, def g
     }
 }
 
+def updateDevelopBranchFrontend(def newVersion, def gitToken) {
+    def repository = "https://${gitToken}@github.com/DannyBatchRun/mangampire-frontend-repository.git"
+    def commitMessage = "Version of frontend updated to ${newVersion}"
+    sh("set +x; git add .")
+    sh("set +x; git commit -m ${commitMessage}")
+    sh("set +x; git push ${repository} develop")
+    sh("git tag ${newVersion} && git push ${repository} develop --tags")
+}
+
 def createANewBranch(def newVersion, def newBranch, def backendService, def gitToken, def completeRelease) {
     sh("git checkout -b ${newBranch}")
     sh("set +x; git push -u https://${gitToken}@github.com/DannyBatchRun/mangampire-backend-repository.git ${newBranch}")
@@ -80,7 +112,11 @@ def buildDockerImage(def microservice) {
 }
 
 def pushDockerImage(def microservice, def jarFile) {
-    dir("${microservice}/target") {
+    def pathPush = "${microservice}/target"
+    if(microservice == "" || microservice == null) {
+        pathPush = pathPush.replaceAll("/","")
+    }
+    dir("${pathPush}") {
         def command = "find . -name '${jarFile}-*.jar'"
         def output = sh(script: command, returnStdout: true).trim()
         def version = output.replaceAll(/.*-(\d+\.\d+\.\d+)\.jar/, '$1')
