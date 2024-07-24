@@ -116,6 +116,7 @@ def pushDockerImage(def microservice, def jarFile) {
     if(microservice == "" || microservice == null) {
         pathPush = pathPush.replaceAll("/","")
     }
+    println "PATH IS!!!! ${pathPush}"
     dir("${pathPush}") {
         def command = "find . -name '${jarFile}-*.jar'"
         def output = sh(script: command, returnStdout: true).trim()
