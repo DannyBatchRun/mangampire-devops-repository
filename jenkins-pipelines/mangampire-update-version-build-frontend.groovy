@@ -46,7 +46,7 @@ pipeline {
             steps {
                 script {
                     println "Package and build will start."
-                    sh("mvn clean install compile jib:dockerBuild -DskipTests")
+                    sh("mvn clean install -DskipTests compile jib:dockerBuild")
                     service.pushDockerImage(null,"${module}")
                 }
             }
