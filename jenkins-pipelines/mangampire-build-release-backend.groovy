@@ -1,6 +1,6 @@
 properties([
         parameters([
-                choice(choices: ['manga-storehouse', 'clients-transaction', 'backend-service'], description: 'Choose the service you want to build.', name: 'BACKEND_SERVICE'),
+                choice(choices: ['manga-storehouse', 'clients-transaction', 'backend-service','shopping-cart'], description: 'Choose the service you want to build.', name: 'BACKEND_SERVICE'),
                 choice(choices: ['Major', 'Minor', 'Patch'], description: 'Select the type of release application.', name: 'RELEASE_SELECT'),
                 booleanParam(description: 'Select this checkbox if you want to update all microservices.', name: 'COMPLETE_RELEASE')
         ])
@@ -21,6 +21,7 @@ pipeline {
         GITHUB_EMAIL = "${env.GITHUB_EMAIL}"
         DATABASE_STOREHOUSE_URL = "${env.DATABASE_STOREHOUSE_URL}"
         DATABASE_TRANSACTION_URL = "${env.TRANSACTION_STOREHOUSE_URL}"
+        SHOPPINGCART_DATABASE_URL = "${env.SHOPPINGCART_DATABASE_URL}"
         DATABASE_PASSWORD = "${env.DATABASE_PASSWORD}"
     }
     stages {
@@ -45,7 +46,7 @@ pipeline {
                     if(COMPLETE_RELEASE) {
                         currentBuild.description = "Build n°#${currentBuild.number}"
                         println "Updating ALL versions for microservices to ${params.RELEASE_SELECT} release."
-                        def versions = ['manga-storehouse', 'clients-transaction', 'backend-service'].collect {
+                        def versions = ['manga-storehouse', 'clients-transaction','backend-service','shopping-cart'].collect {
                             service.updateApplicationVersion(it, "${params.RELEASE_SELECT}")
                         }
                         maxVersion = versions.max()
@@ -104,6 +105,7 @@ pipeline {
                     archiveArtifacts artifacts: "manga-storehouse/target/*.jar", followSymlinks: false, onlyIfSuccessful: true
                     archiveArtifacts artifacts: "clients-transaction/target/*.jar", followSymlinks: false, onlyIfSuccessful: true
                     archiveArtifacts artifacts: "backend-service/target/*.jar", followSymlinks: false, onlyIfSuccessful: true
+                    archiveArtifacts artifacts: "shopping-cart/target/*.jar", followSymlinks: false, onlyIfSuccessful: true
                 }
             }
         }

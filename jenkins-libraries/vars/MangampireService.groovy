@@ -65,12 +65,15 @@ def getJarFile(def selectedService) {
         case "backend-service":
             nameJar = "mangampire-backend-service"
             break
+        case "shopping-cart":
+            nameJar = "mangampire-shopping-cart-service"
+            break
     }
     return nameJar
 }
 
 def buildMavenServices() {
-    def services = ['manga-storehouse', 'clients-transaction', 'backend-service']
+    def services = ['manga-storehouse', 'clients-transaction', 'backend-service','shopping-cart']
     services.each { def service ->
         dir(service) {
             sh("mvn clean install -DskipTests")
@@ -117,7 +120,6 @@ def pushDockerImage(def microservice, def jarFile) {
         pathPush = pathPush.replaceAll("null","")
         pathPush = pathPush.replaceAll("/","").trim()
     }
-    println "PATH IS!!!! ${pathPush}"
     dir("${pathPush}") {
         def command = "find . -name '${jarFile}-*.jar'"
         def output = sh(script: command, returnStdout: true).trim()
