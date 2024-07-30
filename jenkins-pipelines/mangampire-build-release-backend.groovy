@@ -76,7 +76,7 @@ pipeline {
                     withCredentials([string(credentialsId: 'github-pat-secret', variable: 'GIT_TOKEN')]) {
                         println "Update develop branch in progress..."
                         if(COMPLETE_RELEASE) {
-                            service.updateDevelopBranch("${maxVersion}","${newBranch}","${params.BACKEND_SERVICE}","${GIT_TOKEN}",${params.COMPLETE_RELEASE})
+                            service.updateDevelopBranch("${maxVersion}","${newBranch}","${params.BACKEND_SERVICE}","${GIT_TOKEN}",COMPLETE_RELEASE)
                             def baseBranchName = newBranch.tokenize('/')[0..1].join('/')
                             def result = sh(script: "git ls-remote --heads origin ${baseBranchName}*", returnStdout: true).trim()
                             def branchExists = result ? true : false
@@ -86,13 +86,13 @@ pipeline {
                                 def incrementedVersion = version.replaceAll(/(\d+)$/, patch.toString())
                                 incrementedBranch = newBranch.replaceAll(version, incrementedVersion)
                                 currentBuild.displayName = "#${currentBuild.number} - ${incrementedBranch}"
-                                service.createANewBranch("${incrementedVersion}","${incrementedBranch}","${params.BACKEND_SERVICE}","${GIT_TOKEN}",${params.COMPLETE_RELEASE})
+                                service.createANewBranch("${incrementedVersion}","${incrementedBranch}","${params.BACKEND_SERVICE}","${GIT_TOKEN}",COMPLETE_RELEASE)
                             } else if (!branchExists) {
-                                service.createANewBranch("${maxVersion}","${newBranch}","${params.BACKEND_SERVICE}","${GIT_TOKEN}",${params.COMPLETE_RELEASE})
+                                service.createANewBranch("${maxVersion}","${newBranch}","${params.BACKEND_SERVICE}","${GIT_TOKEN}",COMPLETE_RELEASE)
                             }
                         } else {
-                            service.updateDevelopBranch("${newVersion}","${newBranch}","${params.BACKEND_SERVICE}","${GIT_TOKEN}",${params.COMPLETE_RELEASE})
-                            service.createANewBranch("${newVersion}","${newBranch}","${params.BACKEND_SERVICE}","${GIT_TOKEN}",${params.COMPLETE_RELEASE})
+                            service.updateDevelopBranch("${newVersion}","${newBranch}","${params.BACKEND_SERVICE}","${GIT_TOKEN}",COMPLETE_RELEASE)
+                            service.createANewBranch("${newVersion}","${newBranch}","${params.BACKEND_SERVICE}","${GIT_TOKEN}",COMPLETE_RELEASE)
                         }
                     }
                 }
