@@ -59,7 +59,7 @@ def getJarFile(def selectedService) {
         case "manga-storehouse":
             nameJar = "mangampire-storehouse-service"
             break
-        case "client-service":
+        case "clients-service":
             nameJar = "mangampire-client-service"
             break
         case "backend-service":
@@ -76,7 +76,7 @@ def getJarFile(def selectedService) {
 }
 
 def buildMavenServices() {
-    def services = ['manga-storehouse', 'client-service', 'backend-service','shopping-cart','transaction-service']
+    def services = ['manga-storehouse', 'clients-service', 'backend-service','shopping-cart','transaction-service']
     services.each { def service ->
         dir(service) {
             sh("mvn clean install -DskipTests")
