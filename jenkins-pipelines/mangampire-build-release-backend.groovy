@@ -1,6 +1,6 @@
 properties([
         parameters([
-                choice(choices: ['manga-storehouse', 'clients-transaction', 'backend-service','shopping-cart'], description: 'Choose the service you want to build.', name: 'BACKEND_SERVICE'),
+                choice(choices: ['manga-storehouse', 'clients-service', 'backend-service','shopping-cart','transaction-service'], description: 'Choose the service you want to build.', name: 'BACKEND_SERVICE'),
                 choice(choices: ['Major', 'Minor', 'Patch'], description: 'Select the type of release application.', name: 'RELEASE_SELECT'),
                 booleanParam(description: 'Select this checkbox if you want to update all microservices.', name: 'COMPLETE_RELEASE')
         ])
