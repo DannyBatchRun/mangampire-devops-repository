@@ -20,7 +20,8 @@ pipeline {
         GITHUB_USERNAME = "${env.GITHUB_USERNAME}"
         GITHUB_EMAIL = "${env.GITHUB_EMAIL}"
         DATABASE_STOREHOUSE_URL = "${env.DATABASE_STOREHOUSE_URL}"
-        DATABASE_TRANSACTION_URL = "${env.TRANSACTION_STOREHOUSE_URL}"
+        DATABASE_CLIENT_URL = "${env.DATABASE_CLIENT_URL}"
+        DATABASE_TRANSACTION_URL = "${env.DATABASE_TRANSACTION_URL}"
         SHOPPINGCART_DATABASE_URL = "${env.SHOPPINGCART_DATABASE_URL}"
         DATABASE_PASSWORD = "${env.DATABASE_PASSWORD}"
     }
@@ -46,7 +47,7 @@ pipeline {
                     if(COMPLETE_RELEASE) {
                         currentBuild.description = "Build n°#${currentBuild.number}"
                         println "Updating ALL versions for microservices to ${params.RELEASE_SELECT} release."
-                        def versions = ['manga-storehouse', 'clients-transaction','backend-service','shopping-cart'].collect {
+                        def versions = ['manga-storehouse', 'client-service','backend-service','shopping-cart','transaction-service'].collect {
                             service.updateApplicationVersion(it, "${params.RELEASE_SELECT}")
                         }
                         maxVersion = versions.max()
@@ -103,7 +104,8 @@ pipeline {
                 script {
                     println "Archiving JAR files..."
                     archiveArtifacts artifacts: "manga-storehouse/target/*.jar", followSymlinks: false, onlyIfSuccessful: true
-                    archiveArtifacts artifacts: "clients-transaction/target/*.jar", followSymlinks: false, onlyIfSuccessful: true
+                    archiveArtifacts artifacts: "client-service/target/*.jar", followSymlinks: false, onlyIfSuccessful: true
+                    archiveArtifacts artifacts: "transaction-service/target/*.jar", followSymlinks: false, onlyIfSuccessful: true
                     archiveArtifacts artifacts: "backend-service/target/*.jar", followSymlinks: false, onlyIfSuccessful: true
                     archiveArtifacts artifacts: "shopping-cart/target/*.jar", followSymlinks: false, onlyIfSuccessful: true
                 }

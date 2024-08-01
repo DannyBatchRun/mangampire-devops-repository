@@ -22,7 +22,8 @@ pipeline {
         GITHUB_USERNAME = "${env.GITHUB_USERNAME}"
         GITHUB_EMAIL = "${env.GITHUB_EMAIL}"
         DATABASE_STOREHOUSE_URL = "${env.DATABASE_STOREHOUSE_URL}"
-        DATABASE_TRANSACTION_URL = "${env.TRANSACTION_STOREHOUSE_URL}"
+        DATABASE_CLIENT_URL = "${env.DATABASE_CLIENT_URL}"
+        DATABASE_TRANSACTION_URL = "${env.DATABASE_TRANSACTION_URL}"
         SHOPPINGCART_DATABASE_URL = "${env.SHOPPINGCART_DATABASE_URL}"
         DATABASE_PASSWORD = "${env.DATABASE_PASSWORD}"
         REGION = "${env.REGION}"
@@ -61,7 +62,8 @@ pipeline {
                         }
                         if(buildName != '') {
                             copyArtifacts filter: 'manga-storehouse/target/*.jar', fingerprintArtifacts: true, projectName: "${jobName}", selector: specific("${buildName}")
-                            copyArtifacts filter: 'clients-transaction/target/*.jar', fingerprintArtifacts: true, projectName: "${jobName}", selector: specific("${buildName}")
+                            copyArtifacts filter: 'client-service/target/*.jar', fingerprintArtifacts: true, projectName: "${jobName}", selector: specific("${buildName}")
+                            copyArtifacts filter: 'transaction-service/target/*.jar', fingerprintArtifacts: true, projectName: "${jobName}", selector: specific("${buildName}")
                             copyArtifacts filter: 'backend-service/target/*.jar', fingerprintArtifacts: true, projectName: "${jobName}", selector: specific("${buildName}")
                             copyArtifacts filter: 'shopping-cart/target/*.jar', fingerprintArtifacts: true, projectName: "${jobName}", selector: specific("${buildName}")
                         }
@@ -76,13 +78,15 @@ pipeline {
             steps {
                 script {
                     service.buildDockerImage("manga-storehouse")
-                    service.buildDockerImage("clients-transaction")
+                    service.buildDockerImage("client-service")
                     service.buildDockerImage("backend-service")
                     service.buildDockerImage("shopping-cart")
+                    service.buildDockerImage("transaction-service")
                     service.pushDockerImage("manga-storehouse",service.getJarFile("manga-storehouse"))
-                    service.pushDockerImage("clients-transaction",service.getJarFile("clients-transaction"))
+                    service.pushDockerImage("client-service",service.getJarFile("client-service"))
                     service.pushDockerImage("backend-service",service.getJarFile("backend-service"))
                     service.pushDockerImage("shopping-cart",service.getJarFile("shopping-cart"))
+                    service.pushDockerImage("transaction-service",service.getJarFile("transaction-service"))
                 }
             }
         }
@@ -92,9 +96,10 @@ pipeline {
                     println "Deleting docker images in local..."
                     sleep 20
                     service.deleteLocalDockerImages(service.getJarFile("manga-storehouse"))
-                    service.deleteLocalDockerImages(service.getJarFile("clients-transaction"))
+                    service.deleteLocalDockerImages(service.getJarFile("client-service"))
                     service.deleteLocalDockerImages(service.getJarFile("backend-service"))
                     service.deleteLocalDockerImages(service.getJarFile("shopping-cart"))
+                    service.deleteLocalDockerImages(service.getJarFile("transaction-service"))
                 }
             }
         }
