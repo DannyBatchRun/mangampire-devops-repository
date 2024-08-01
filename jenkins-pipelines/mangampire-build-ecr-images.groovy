@@ -62,7 +62,7 @@ pipeline {
                         }
                         if(buildName != '') {
                             copyArtifacts filter: 'manga-storehouse/target/*.jar', fingerprintArtifacts: true, projectName: "${jobName}", selector: specific("${buildName}")
-                            copyArtifacts filter: 'client-service/target/*.jar', fingerprintArtifacts: true, projectName: "${jobName}", selector: specific("${buildName}")
+                            copyArtifacts filter: 'clients-service/target/*.jar', fingerprintArtifacts: true, projectName: "${jobName}", selector: specific("${buildName}")
                             copyArtifacts filter: 'transaction-service/target/*.jar', fingerprintArtifacts: true, projectName: "${jobName}", selector: specific("${buildName}")
                             copyArtifacts filter: 'backend-service/target/*.jar', fingerprintArtifacts: true, projectName: "${jobName}", selector: specific("${buildName}")
                             copyArtifacts filter: 'shopping-cart/target/*.jar', fingerprintArtifacts: true, projectName: "${jobName}", selector: specific("${buildName}")
@@ -78,12 +78,12 @@ pipeline {
             steps {
                 script {
                     service.buildDockerImage("manga-storehouse")
-                    service.buildDockerImage("client-service")
+                    service.buildDockerImage("clients-service")
                     service.buildDockerImage("backend-service")
                     service.buildDockerImage("shopping-cart")
                     service.buildDockerImage("transaction-service")
                     service.pushDockerImage("manga-storehouse",service.getJarFile("manga-storehouse"))
-                    service.pushDockerImage("client-service",service.getJarFile("client-service"))
+                    service.pushDockerImage("clients-service",service.getJarFile("clients-service"))
                     service.pushDockerImage("backend-service",service.getJarFile("backend-service"))
                     service.pushDockerImage("shopping-cart",service.getJarFile("shopping-cart"))
                     service.pushDockerImage("transaction-service",service.getJarFile("transaction-service"))
@@ -96,7 +96,7 @@ pipeline {
                     println "Deleting docker images in local..."
                     sleep 20
                     service.deleteLocalDockerImages(service.getJarFile("manga-storehouse"))
-                    service.deleteLocalDockerImages(service.getJarFile("client-service"))
+                    service.deleteLocalDockerImages(service.getJarFile("clients-service"))
                     service.deleteLocalDockerImages(service.getJarFile("backend-service"))
                     service.deleteLocalDockerImages(service.getJarFile("shopping-cart"))
                     service.deleteLocalDockerImages(service.getJarFile("transaction-service"))
